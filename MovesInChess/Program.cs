@@ -9,7 +9,14 @@ namespace MovesInChess
             Console.WriteLine("Здравствуйте, введите координаты коня до хода.\nЗатем введите координаты коня после хода.");
             string startmove = ReadCoordinate();
             string endmove = ReadCoordinate();
-            PawnMove(startmove, endmove);
+            int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
+            int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
+            //HorseMove(startmove, endmove, move1, move2);
+            //ElephantMove(startmove, endmove, move1, move2);
+            //RookMove(startmove, endmove);
+            //QueenMove(startmove, endmove, move1, move2);
+            //KingMove(startmove, endmove, move1, move2);
+            //PawnMove(startmove, endmove, move1, move2);
         }
         static string ReadCoordinate()
         {
@@ -27,20 +34,16 @@ namespace MovesInChess
             else
                 return false;
         }
-        static void HorseMove(string startmove, string endmove) // конь
+        static void HorseMove(string startmove, string endmove, int move1, int move2) // конь
         {
-            int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
-            int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
             if (((move1 == 2) && (move2 == 1))
                 || ((move1 == 1) && (move2 == 2)))
                 Console.WriteLine("Верно");
             else
                 Console.WriteLine("Не верно");
         }
-        static void ElephantMove(string startmove, string endmove) // слон
+        static void ElephantMove(string startmove, string endmove, int move1, int move2) // слон
         {
-            int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
-            int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
             if (((move1 + move2) % 2 == 0) && startmove[0] != endmove[0] && startmove[1] != endmove[1])
                 Console.WriteLine("Верно");
             else
@@ -53,28 +56,22 @@ namespace MovesInChess
             else
                 Console.WriteLine("Не верно");
         }
-        static void QueenMove(string startmove, string endmove) // ферзь
+        static void QueenMove(string startmove, string endmove, int move1, int move2) // ферзь
         {
-            int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
-            int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
             if (((move1 + move2) % 2 == 0) || (startmove[0] == endmove[0] || startmove[1] == endmove[1]))
                 Console.WriteLine("Верно");
             else
                 Console.WriteLine("Не верно");
         }
-        static void KingMove(string startmove, string endmove) // король
+        static void KingMove(string startmove, string endmove, int move1, int move2) // король
         {
-            int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
-            int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
             if (move1 == move2 || move1 - move2 == 1 || move2 - move1 == 1)
                 Console.WriteLine("Верно");
             else
                 Console.WriteLine("Не верно");
         }
-        static void PawnMove(string startmove, string endmove) // пешка
+        static void PawnMove(string startmove, string endmove, int move1, int move2) // пешка
         {
-            int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
-            int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
             if (((startmove[1] == '2' || startmove[1] == '7') && (move2 == 1 || move2 == 2) && move1 == 0) || (move1 == 0 && move2 == 1))
                 Console.WriteLine("Верно");
             else
