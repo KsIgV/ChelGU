@@ -9,9 +9,7 @@ namespace MovesInChess
             Console.WriteLine("Здравствуйте, введите координаты коня до хода.\nЗатем введите координаты коня после хода.");
             string startmove = ReadCoordinate();
             string endmove = ReadCoordinate();
-<<<<<<< Updated upstream
             HorseMove(startmove, endmove);
-=======
             int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
             int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
             //HorseMove(startmove, endmove, move1, move2);
@@ -20,7 +18,6 @@ namespace MovesInChess
             //QueenMove(startmove, endmove, move1, move2);
             //KingMove(startmove, endmove, move1, move2);
             //PawnMove(startmove, endmove, move1, move2);
->>>>>>> Stashed changes
         }
         static string ReadCoordinate()
         {
@@ -48,8 +45,6 @@ namespace MovesInChess
             else
                 Console.WriteLine("Не верно");
         }
-<<<<<<< Updated upstream
-=======
         static void ElephantMove(string startmove, string endmove, int move1, int move2) // слон
         {
             if (((move1 == move2) && startmove[0] != endmove[0] && startmove[1] != endmove[1]))
@@ -85,6 +80,5 @@ namespace MovesInChess
             else
                 Console.WriteLine("Не верно");
         }
->>>>>>> Stashed changes
     }
 }
