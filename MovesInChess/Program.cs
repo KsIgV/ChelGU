@@ -6,24 +6,13 @@ namespace MovesInChess
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Введите начальную координату.\nЗатем введите конечную координату.");
-            string startmove = ReadCoordinate();
-            string endmove = ReadCoordinate();
-            int move1 = Math.Abs(startmove[0] - endmove[0]); // С B
-            int move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
-            Console.WriteLine("Введите соотвествующую букву, для фигуры которой вы хотите сходить.\nСлон - E, ладья - R, пешка - Р, конь - L, ферзь - Q, король - К");
-            char figure = Convert.ToChar(Console.ReadLine());
-            char[,] FigureArray = StartFigure();
-            MotionFigure(figure, startmove, endmove, move1, move2, FigureArray);
-            Console.Clear();
-            //HorseMove(startmove, endmove);
-            //ElephantMove(startmove, endmove, move1, move2);
-            //RookMove(startmove, endmove);
-            //QueenMove(startmove, endmove, move1, move2);
-            //KingMove(startmove, endmove, move1, move2);
-            //PawnMove(startmove, endmove, move1, move2);
-            DrawTable(FigureArray);
-            FillTableStartingFigures(FigureArray);
+            string startmove;
+            char figure;
+            string endmove;
+            int move1;
+            int move2;
+            char[,] newTable = ChangeTable();
+            CycleForArray(newTable, out figure, out startmove, out endmove, out move1, out move2);
         }
         static string ReadCoordinate() //считываем координаты
         {
@@ -41,65 +30,48 @@ namespace MovesInChess
             else
                 return false;
         }
-        static void HorseMove(int move1, int move2) //конь
+        static bool HorseMove(int move1, int move2) //конь
         {
             if (((move1 == 2) && (move2 == 1))
                 || ((move1 == 1) && (move2 == 2)))
-                Console.WriteLine("Верно");
+                return true;
             else
-                Console.WriteLine("Не верно");
+                return false;
         }
-        static void ElephantMove(string startmove, string endmove, int move1, int move2) // слон
+        static bool ElephantMove(string startmove, string endmove, int move1, int move2) // слон
         {
-            if (((move1 == move2) && startmove[0] != endmove[0] && startmove[1] != endmove[1]))
-                Console.WriteLine("Верно");
+            if ((move1 == move2) && startmove[0] != endmove[0] && startmove[1] != endmove[1])
+                return true;
             else
-                Console.WriteLine("Не верно");
+                return false;
         }
-        static void RookMove(string startmove, string endmove) // ладья
+        static bool RookMove(string startmove, string endmove) // ладья
         {
             if (startmove[0] == endmove[0] || startmove[1] == endmove[1])
-                Console.WriteLine("Верно");
+                return true;
             else
-                Console.WriteLine("Не верно");
+                return false;
         }
-        static void QueenMove(string startmove, string endmove, int move1, int move2) // ферзь
+        static bool QueenMove(string startmove, string endmove, int move1, int move2) // ферзь
         {
             if (((move1 == move2) || (startmove[0] == endmove[0] || startmove[1] == endmove[1])))
-                Console.WriteLine("Верно");
+                return true;
             else
-                Console.WriteLine("Не верно");
+                return false;
         }
-        static void KingMove(string startmove, string endmove, int move1, int move2) // король
+        static bool KingMove(string startmove, string endmove, int move1, int move2) // король
         {
             if (move1 + move2 == 1 || move1 == 1 && move2 == 1)
-                Console.WriteLine("Верно");
+                return true;
             else
-                Console.WriteLine("Не верно");
+                return false;
         }
-        static void PawnMove(string startmove, string endmove, int move1, int move2) // пешка
+        static bool PawnMove(string startmove, string endmove, int move1, int move2) // пешка
         {
             if (((startmove[1] == '2' || startmove[1] == '7') && (move2 == 1 || move2 == 2) && move1 == 0) || (move1 == 0 && move2 == 1))
-                Console.WriteLine("Верно");
+                return true;
             else
-                Console.WriteLine("Не верно");
-        }
-        static void FillTableStartingFigures(char[,] FigureArray) //заносим в таблицу координаты
-        {
-            int cursorPositionY = 1;
-            for (int i = 0; i < FigureArray.GetLength(0); i++)
-            {
-                int cursorPositionX = 1;
-                for (int j = 0; j < FigureArray.GetLength(1); j++)
-                {
-                    Console.SetCursorPosition(cursorPositionX, cursorPositionY);
-                    Console.Write(FigureArray[i, j]);
-                    cursorPositionX += 2;
-                }
-                cursorPositionY += 2;
-            }
-            Console.WriteLine();
-            Console.WriteLine();
+                return false;
         }
         static void DrawTable(char[,] FigureArray) //рисуем таблицу
         {
@@ -132,58 +104,96 @@ namespace MovesInChess
                 }
             }
         }
-        static char[,] StartFigure()
+        static void MotionFigure(char figure, string startmove, string endmove, int move1, int move2, char[,] newTable) 
         {
-            char[,] FigureArray = new char[8, 8] //создаем массив того, что будет на поле
-            {
-                {'R', 'L', 'E', 'Q', 'K', 'E', 'L', 'R'}, //a
-                {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}, //b
-                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //c
-                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //d
-                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-                {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-                {'R', 'L', 'E', 'Q', 'K', 'E', 'L', 'R'}
-            };
-            return FigureArray;
-        }
-        static void MotionFigure(char figure, string startmove, string endmove, int move1, int move2, char[,] FigureArray)
-        {
-            if (FigureArray[startmove[1] - '1', startmove[0] - 'A'] == figure)
+            if (newTable[startmove[1] - '1', startmove[0] - 'A'] == figure)
             {
                 switch (figure)
                 {
                     case 'K':
-                        KingMove(startmove, endmove, move1, move2);
-                        FigureArray[startmove[1] - '1', startmove[0] - 'A'] = ' ';
-                        FigureArray[endmove[1] - '1', endmove[0] - 'A'] = figure;
+                        if (KingMove(startmove, endmove, move1, move2) == true)
+                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
                         break;
                     case 'Q':
-                        QueenMove(startmove, endmove, move1, move2);
-                        FigureArray[startmove[1] - '1', startmove[0] - 'A'] = ' ';
-                        FigureArray[endmove[1] - '1', endmove[0] - 'A'] = figure;
+                        if (QueenMove(startmove, endmove, move1, move2) == true)
+                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
                         break;
                     case 'L':
-                        HorseMove(move1, move2);
-                        FigureArray[startmove[1] - '1', startmove[0] - 'A'] = ' ';
-                        FigureArray[endmove[1] - '1', endmove[0] - 'A'] = figure;
+                        if (HorseMove(move1, move2) == true)
+                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
                         break;
                     case 'P':
-                        PawnMove(startmove, endmove, move1, move2);
-                        FigureArray[startmove[1] - '1', startmove[0] - 'A'] = ' ';
-                        FigureArray[endmove[1] - '1', endmove[0] - 'A'] = figure;
+                        if (PawnMove(startmove, endmove, move1, move2) == true)
+                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
                         break;
                     case 'R':
-                        RookMove(startmove, endmove);
-                        FigureArray[startmove[1] - '1', startmove[0] - 'A'] = ' ';
-                        FigureArray[endmove[1] - '1', endmove[0] - 'A'] = figure;
+                        if (RookMove(startmove, endmove) == true)
+                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
                         break;
                     case 'E':
-                        ElephantMove(startmove, endmove, move1, move2);
-                        FigureArray[startmove[1] - '1', startmove[0] - 'A'] = ' ';
-                        FigureArray[endmove[1] - '1', endmove[0] - 'A'] = figure;
+                        if (ElephantMove(startmove, endmove, move1, move2) == true)
+                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
                         break;
                 }
+            }
+        }
+        static void MoveOfAPiece(char figure, string startmove, string endmove, int move1, int move2, char[,] newTable)
+        {
+            if (newTable[startmove[1] - '1', startmove[0] - 'A'] == figure)
+            {
+                newTable[startmove[1] - '1', startmove[0] - 'A'] = ' ';
+                newTable[endmove[1] - '1', endmove[0] - 'A'] = figure;
+            }
+        }
+        static char[,] ChangeTable()
+        {
+            char[,] newTable = new char[8, 8]
+            {
+            {'R', 'L', 'E', 'Q', 'K', 'E', 'L', 'R'}, //a
+            {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}, //b
+            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //c
+            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //d
+            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+            {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+            {'R', 'L', 'E', 'Q', 'K', 'E', 'L', 'R'}
+            };
+            return newTable;
+        }
+        static void FillTableFigures(char[,] newTable) //заносим в таблицу координаты 
+        {
+            int cursorPositionY = 1;
+            for (int i = 0; i < newTable.GetLength(0); i++)
+            {
+                int cursorPositionX = 1;
+                for (int j = 0; j < newTable.GetLength(1); j++)
+                {
+                    Console.SetCursorPosition(cursorPositionX, cursorPositionY);
+                    Console.Write(newTable[i, j]);
+                    cursorPositionX += 2;
+                }
+                cursorPositionY += 2;
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+        static void CycleForArray(char[,] newTable, out char figure, out string startmove, out string endmove, out int move1, out int move2)
+        {
+            while (true)
+            {
+                Console.WriteLine("Введите начальную координату.\nЗатем введите конечную координату.");
+                startmove = ReadCoordinate();
+                endmove = ReadCoordinate();
+                move1 = Math.Abs(startmove[0] - endmove[0]); // С B
+                move2 = Math.Abs(startmove[1] - endmove[1]); // 1 5
+                Console.WriteLine("Введите соотвествующую букву, для фигуры которой вы хотите сходить.\nСлон - E, ладья - R, пешка - Р, конь - L, ферзь - Q, король - К");
+                figure = Convert.ToChar(Console.ReadLine());
+                MotionFigure(figure, startmove, endmove, move1, move2, newTable);
+                Console.Clear();
+                ChangeTable();
+                MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                DrawTable(newTable);
+                FillTableFigures(newTable);
             }
         }
     }
