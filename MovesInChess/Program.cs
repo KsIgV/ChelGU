@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace MovesInChess
 {
@@ -11,7 +12,7 @@ namespace MovesInChess
             string endmove;
             int move1;
             int move2;
-            char[,] newTable = ChangeTable();
+            char[,] newTable = OpenForTXT();
             CycleForArray(newTable, out figure, out startmove, out endmove, out move1, out move2);
         }
         static string ReadCoordinate() //считываем координаты
@@ -73,15 +74,15 @@ namespace MovesInChess
             else
                 return false;
         }
-        static void DrawTable(char[,] FigureArray) //рисуем таблицу
+        static void DrawTable(char[,] newTable) //рисуем таблицу
         {
-            for (int i = 0; i < FigureArray.GetLength(0); i++)
+            for (int i = 0; i < newTable.GetLength(0); i++)
             {
                 string UpLeftLine = "┌";
                 string UpRightLine = "┐";
                 string DownLeftLine = "└";
                 string DownRightLine = "┘";
-                for (int j = 0; j < FigureArray.GetLength(1); j++)
+                for (int j = 0; j < newTable.GetLength(1); j++)
                 {
                     Console.SetCursorPosition(j * 2, i * 2);
                     if (i != 0)
@@ -104,7 +105,7 @@ namespace MovesInChess
                 }
             }
         }
-        static void MotionFigure(char figure, string startmove, string endmove, int move1, int move2, char[,] newTable) 
+        static void MotionFigure(char figure, string startmove, string endmove, int move1, int move2, char[,] newTable)
         {
             if (newTable[startmove[1] - '1', startmove[0] - 'A'] == figure)
             {
@@ -181,7 +182,12 @@ namespace MovesInChess
         {
             while (true)
             {
-                Console.WriteLine("Введите начальную координату.\nЗатем введите конечную координату.");
+                Console.WriteLine("Введите начальную координату.\nЗатем введите конечную координату.\nЕсли хотите выйти нажмите Esc.");
+                if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                {
+                    SaveForTXT(newTable);
+                    Environment.Exit(0);
+                }
                 startmove = ReadCoordinate();
                 endmove = ReadCoordinate();
                 move1 = Math.Abs(startmove[0] - endmove[0]); // С B
@@ -190,11 +196,49 @@ namespace MovesInChess
                 figure = Convert.ToChar(Console.ReadLine());
                 MotionFigure(figure, startmove, endmove, move1, move2, newTable);
                 Console.Clear();
-                ChangeTable();
                 MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
                 DrawTable(newTable);
                 FillTableFigures(newTable);
             }
+        }
+        static void SaveForTXT(char[,] newTable) //записывает файл в тхт
+        {
+            string path = @"D:\Project\KsIgV\ChelGU\MovesInChess\ChessBoard.txt";
+            using StreamWriter sw = new StreamWriter(path, false);
+            for (int i = 0; i < newTable.GetLength(0); i++)
+            {
+                for (int j = 0; j < newTable.GetLength(1); j++)
+                {
+                    sw.Write(newTable[i, j]);
+                    sw.Write('.');
+                }
+                sw.WriteLine();
+            }
+        }
+        static char[,] OpenForTXT()
+        {
+            string path = @"D:\Project\KsIgV\ChelGU\MovesInChess\ChessBoard.txt";
+            if (File.Exists(path) == true)
+            {
+                char[,] newTable = new char[8, 8];
+                using (StreamReader popa = new StreamReader(path))
+                {
+                    string str;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        str = popa.ReadLine();
+                        string[] text = str.Split('.');
+                        for (int j = 0; j < 8; j++)
+                        {
+                            newTable[i, j] = Convert.ToChar(text[j]);
+                        }
+                    }
+                }
+                DrawTable(newTable);
+                FillTableFigures(newTable);
+                return newTable;
+            }
+            return ChangeTable();
         }
     }
 }
