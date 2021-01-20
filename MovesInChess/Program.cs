@@ -7,13 +7,8 @@ namespace MovesInChess
     {
         static void Main(string[] args)
         {
-            string startmove;
-            char figure;
-            string endmove;
-            int move1;
-            int move2;
             char[,] newTable = OpenForTXT();
-            CycleForArray(newTable, out figure, out startmove, out endmove, out move1, out move2);
+            CycleForArray(newTable);
         }
         static string ReadCoordinate() //считываем координаты
         {
@@ -60,7 +55,7 @@ namespace MovesInChess
             else
                 return false;
         }
-        static bool KingMove(string startmove, string endmove, int move1, int move2) // король
+        static bool KingMove(int move1, int move2) // король
         {
             if (move1 + move2 == 1 || move1 == 1 && move2 == 1)
                 return true;
@@ -105,40 +100,40 @@ namespace MovesInChess
                 }
             }
         }
-        static void MotionFigure(char figure, string startmove, string endmove, int move1, int move2, char[,] newTable)
+        static void MotionFigure(char figure, string startmove, string endmove, int move1, int move2, char[,] newTable) //проверяет, что нажали
         {
             if (newTable[startmove[1] - '1', startmove[0] - 'A'] == figure)
             {
                 switch (figure)
                 {
                     case 'K':
-                        if (KingMove(startmove, endmove, move1, move2) == true)
-                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                        if (KingMove(move1, move2) == true)
+                            MoveOfAPiece(figure, startmove, endmove, newTable);
                         break;
                     case 'Q':
                         if (QueenMove(startmove, endmove, move1, move2) == true)
-                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                            MoveOfAPiece(figure, startmove, endmove, newTable);
                         break;
                     case 'L':
                         if (HorseMove(move1, move2) == true)
-                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                            MoveOfAPiece(figure, startmove, endmove, newTable);
                         break;
                     case 'P':
                         if (PawnMove(startmove, endmove, move1, move2) == true)
-                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                            MoveOfAPiece(figure, startmove, endmove, newTable);
                         break;
                     case 'R':
                         if (RookMove(startmove, endmove) == true)
-                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                            MoveOfAPiece(figure, startmove, endmove, newTable);
                         break;
                     case 'E':
                         if (ElephantMove(startmove, endmove, move1, move2) == true)
-                            MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                            MoveOfAPiece(figure, startmove, endmove, newTable);
                         break;
                 }
             }
         }
-        static void MoveOfAPiece(char figure, string startmove, string endmove, int move1, int move2, char[,] newTable)
+        static void MoveOfAPiece(char figure, string startmove, string endmove, char[,] newTable) //меняет элементы массива
         {
             if (newTable[startmove[1] - '1', startmove[0] - 'A'] == figure)
             {
@@ -146,7 +141,7 @@ namespace MovesInChess
                 newTable[endmove[1] - '1', endmove[0] - 'A'] = figure;
             }
         }
-        static char[,] ChangeTable()
+        static char[,] ChangeTable() //создает массив начальный
         {
             char[,] newTable = new char[8, 8]
             {
@@ -178,8 +173,13 @@ namespace MovesInChess
             Console.WriteLine();
             Console.WriteLine();
         }
-        static void CycleForArray(char[,] newTable, out char figure, out string startmove, out string endmove, out int move1, out int move2)
+        static void CycleForArray(char[,] newTable) //делает ходы бесконечностью
         {
+            string startmove;
+            char figure;
+            string endmove;
+            int move1;
+            int move2;
             while (true)
             {
                 Console.WriteLine("Введите начальную координату.\nЗатем введите конечную координату.\nЕсли хотите выйти нажмите Esc.");
@@ -196,7 +196,7 @@ namespace MovesInChess
                 figure = Convert.ToChar(Console.ReadLine());
                 MotionFigure(figure, startmove, endmove, move1, move2, newTable);
                 Console.Clear();
-                MoveOfAPiece(figure, startmove, endmove, move1, move2, newTable);
+                MoveOfAPiece(figure, startmove, endmove, newTable);
                 DrawTable(newTable);
                 FillTableFigures(newTable);
             }
@@ -215,7 +215,7 @@ namespace MovesInChess
                 sw.WriteLine();
             }
         }
-        static char[,] OpenForTXT()
+        static char[,] OpenForTXT() //открывает файл если имеется
         {
             string path = @"D:\Project\KsIgV\ChelGU\MovesInChess\ChessBoard.txt";
             if (File.Exists(path) == true)
