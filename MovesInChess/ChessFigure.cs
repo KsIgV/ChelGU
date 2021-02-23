@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MovesInChess
 {
@@ -16,14 +14,14 @@ namespace MovesInChess
         WorkWithFIles workWithFIles = new WorkWithFIles();
         public void CycleForArray() //делает ходы бесконечностью
         {
-            char[,] newTable = workWithFIles.OpenForTXT();
+            string[,] newTable = workWithFIles.OpenForTXT();
             ChessBoard chessBoard = new ChessBoard();
             chessBoard.DrawTable();
             FillTableFigures(newTable);
             Console.SetCursorPosition(1, 1);
             WASDandEnter(newTable, cursorPositionY, cursorPositionX, count);
         }
-        private void FillTableFigures(char[,] newTable) //заносим в таблицу координаты 
+        private void FillTableFigures(string[,] newTable) //заносим в таблицу координаты 
         {
             int cursorPositionY = 1;
             for (int i = 0; i < newTable.GetLength(0); i++)
@@ -40,7 +38,7 @@ namespace MovesInChess
             Console.WriteLine();
             Console.WriteLine();
         }
-        private bool CheckEnterCoordinate(char[,] newTable, ref int firstEnterY, ref int firstEnterX, ref int secondEnterY, ref int secondEnterX, ref int cursorPositionY, ref int cursorPositionX, ref bool count) //проверяет какой раз мы нажимаем enter, то есть хотим мы с этого места ПЕРЕДВИНУТЬ фигуру, или наоборот ПОСТАВИТЬ фигуру
+        private bool CheckEnterCoordinate(ref int firstEnterY, ref int firstEnterX, ref int secondEnterY, ref int secondEnterX, ref int cursorPositionY, ref int cursorPositionX, ref bool count) //проверяет какой раз мы нажимаем enter, то есть хотим мы с этого места ПЕРЕДВИНУТЬ фигуру, или наоборот ПОСТАВИТЬ фигуру
         {
             if (!count)
             {
@@ -56,7 +54,7 @@ namespace MovesInChess
             }
             return count;
         }
-        private int CheckPosition(char[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
+        private int CheckPosition(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
         {
             if (cursorPositionX > 16 || cursorPositionY > 16 || cursorPositionY <= 0 || cursorPositionX <= 0)
             {
@@ -71,89 +69,71 @@ namespace MovesInChess
         }
         public bool HorseMove(int move1, int move2) //конь
         {
-            if (((move1 == 2) && (move2 == 1))
-                || ((move1 == 1) && (move2 == 2)))
-                return true;
-            else
-                return false;
+            return ((move1 == 2) && (move2 == 1))
+            || ((move1 == 1) && (move2 == 2));
         }
         public bool ElephantMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // слон
         {
-            if ((move1 == move2) && firstEnterX != secondEnterX && firstEnterY != secondEnterY)
-                return true;
-            else
-                return false;
+                return move1 == move2 && firstEnterX != secondEnterX && firstEnterY != secondEnterY;
         }
         public bool RookMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) // ладья
         {
-            if (firstEnterX == secondEnterX || firstEnterY == secondEnterY)
-                return true;
-            else
-                return false;
+                return firstEnterX == secondEnterX || firstEnterY == secondEnterY;
         }
         public bool QueenMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // ферзь
         {
-            if (((move1 == move2) || (firstEnterX == secondEnterX || firstEnterY == secondEnterY)))
-                return true;
-            else
-                return false;
+                return move1 == move2 || firstEnterX == secondEnterX || firstEnterY == secondEnterY;
         }
         public bool KingMove(int move1, int move2) // король
         {
-            if (move1 + move2 == 1 || move1 == 1 && move2 == 1)
-                return true;
-            else
-                return false;
+                return move1 + move2 == 1 || move1 == 1 && move2 == 1;
         }
         public bool PawnMove(int firstEnterY, int move1, int move2) // пешка
         {
-            if (((firstEnterY == '2' || firstEnterY == '7') && (move2 == 1 || move2 == 2) && move1 == 0) || (move1 == 0 && move2 == 1))
-                return true;
-            else
-                return false;
+                return ((firstEnterY == 2 || firstEnterY == 7) && (move2 == 1 || move2 == 2) && move1 == 0) || (move1 == 0 && move2 == 1);
         }
-        private void MoveOfAPiece(char[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) //меняет элементы массива
+        private void MoveOfAPiece(string[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) //меняет элементы массива
         {
-            if (newTable[secondEnterX, secondEnterY] == ' ')
+            if (newTable[secondEnterX, secondEnterY] == " ")
             {
                 newTable[secondEnterX, secondEnterY] = newTable[firstEnterX, firstEnterY];
-                newTable[firstEnterX, firstEnterY] = ' ';
+                newTable[firstEnterX, firstEnterY] = " ";
             }
         }
-        private void NameAndCheckFigure(char[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX)
+        private void NameAndCheckFigure(string[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX)
         {
-            char figure = newTable[firstEnterX, firstEnterY]; // берем значение фигуры
+            string figure = newTable[firstEnterX, firstEnterY]; // берем значение фигуры
             int move1 = Math.Abs(firstEnterY - secondEnterY); // С B
             int move2 = Math.Abs(firstEnterX - secondEnterX); // 1 5
             switch (figure)
             {
-                case 'K':
+                case "K":
                     if (KingMove(move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case 'Q':
+                case "Q":
                     if (QueenMove(firstEnterX, firstEnterY, secondEnterX, secondEnterY, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case 'L':
+                case "L":
                     if (HorseMove(move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case 'P':
+                case "P":
                     if (PawnMove(firstEnterY, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case 'R':
+                case "R":
                     if (RookMove(firstEnterX, firstEnterY, secondEnterX, secondEnterY))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case 'E':
+                case "E":
                     if (ElephantMove(firstEnterX, firstEnterY, secondEnterX, secondEnterY, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
             }
         }
-        private void WASDandEnter(char[,] newTable, int cursorPositionY, int cursorPositionX, bool count)
+        private void WASDandEnter(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count)
         {
             while (true)
             {
@@ -180,7 +160,7 @@ namespace MovesInChess
                         CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.Enter:
-                        CheckEnterCoordinate(newTable, ref firstEnterY, ref firstEnterX, ref secondEnterY, ref secondEnterX, ref cursorPositionY, ref cursorPositionX, ref count);
+                        CheckEnterCoordinate(ref firstEnterY, ref firstEnterX, ref secondEnterY, ref secondEnterX, ref cursorPositionY, ref cursorPositionX, ref count);
                         NameAndCheckFigure(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                         FillTableFigures(newTable);
                         Console.SetCursorPosition(cursorPositionY, cursorPositionX);

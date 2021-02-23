@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MovesInChess
 {
@@ -9,7 +7,7 @@ namespace MovesInChess
         WorkWithFIles workWithFIles = new WorkWithFIles();
         public void DrawTable() //рисуем таблицу
         {
-            char[,] newTable = workWithFIles.OpenForTXT();
+            string[,] newTable = workWithFIles.OpenForTXT();
             for (int i = 0; i < newTable.GetLength(0); i++)
             {
                 string UpLeftLine = "┌";
