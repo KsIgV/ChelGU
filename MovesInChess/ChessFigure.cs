@@ -14,14 +14,14 @@ namespace MovesInChess
         WorkWithFIles workWithFIles = new WorkWithFIles();
         public void CycleForArray() //делает ходы бесконечностью
         {
-            string[,] newTable = workWithFIles.OpenForTXT();
+            char[,] newTable = workWithFIles.OpenForTXT();
             ChessBoard chessBoard = new ChessBoard();
             chessBoard.DrawTable();
             FillTableFigures(newTable);
             Console.SetCursorPosition(1, 1);
             WASDandEnter(newTable, cursorPositionY, cursorPositionX, count);
         }
-        private void FillTableFigures(string[,] newTable) //заносим в таблицу координаты 
+        private void FillTableFigures(char[,] newTable) //заносим в таблицу координаты 
         {
             int cursorPositionY = 1;
             for (int i = 0; i < newTable.GetLength(0); i++)
@@ -54,7 +54,7 @@ namespace MovesInChess
             }
             return count;
         }
-        private int CheckPosition(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
+        private int CheckPosition(char[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
         {
             if (cursorPositionX > 16 || cursorPositionY > 16 || cursorPositionY <= 0 || cursorPositionX <= 0)
             {
@@ -74,66 +74,66 @@ namespace MovesInChess
         }
         public bool ElephantMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // слон
         {
-                return move1 == move2 && firstEnterX != secondEnterX && firstEnterY != secondEnterY;
+            return move1 == move2 && firstEnterX != secondEnterX && firstEnterY != secondEnterY;
         }
         public bool RookMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) // ладья
         {
-                return firstEnterX == secondEnterX || firstEnterY == secondEnterY;
+            return firstEnterX == secondEnterX || firstEnterY == secondEnterY;
         }
         public bool QueenMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // ферзь
         {
-                return move1 == move2 || firstEnterX == secondEnterX || firstEnterY == secondEnterY;
+            return move1 == move2 || firstEnterX == secondEnterX || firstEnterY == secondEnterY;
         }
         public bool KingMove(int move1, int move2) // король
         {
-                return move1 + move2 == 1 || move1 == 1 && move2 == 1;
+            return move1 + move2 == 1 || move1 == 1 && move2 == 1;
         }
         public bool PawnMove(int firstEnterY, int move1, int move2) // пешка
         {
-                return ((firstEnterY == 2 || firstEnterY == 7) && (move2 == 1 || move2 == 2) && move1 == 0) || (move1 == 0 && move2 == 1);
+            return ((firstEnterY == '2' || firstEnterY == '7') && (move2 == 1 || move2 == 2) && move1 == 0) || (move1 == 0 && move2 == 1);
         }
-        private void MoveOfAPiece(string[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) //меняет элементы массива
+        private void MoveOfAPiece(char[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) //меняет элементы массива
         {
-            if (newTable[secondEnterX, secondEnterY] == " ")
+            if (newTable[secondEnterX, secondEnterY] == ' ')
             {
                 newTable[secondEnterX, secondEnterY] = newTable[firstEnterX, firstEnterY];
-                newTable[firstEnterX, firstEnterY] = " ";
+                newTable[firstEnterX, firstEnterY] = ' ';
             }
         }
-        private void NameAndCheckFigure(string[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX)
+        private void NameAndCheckFigure(char[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX)
         {
-            string figure = newTable[firstEnterX, firstEnterY]; // берем значение фигуры
+            char figure = newTable[firstEnterX, firstEnterY]; // берем значение фигуры
             int move1 = Math.Abs(firstEnterY - secondEnterY); // С B
             int move2 = Math.Abs(firstEnterX - secondEnterX); // 1 5
             switch (figure)
             {
-                case "K":
+                case 'K':
                     if (KingMove(move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case "Q":
+                case 'Q':
                     if (QueenMove(firstEnterX, firstEnterY, secondEnterX, secondEnterY, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case "L":
+                case 'L':
                     if (HorseMove(move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case "P":
+                case 'P':
                     if (PawnMove(firstEnterY, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case "R":
+                case 'R':
                     if (RookMove(firstEnterX, firstEnterY, secondEnterX, secondEnterY))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case "E":
+                case 'E':
                     if (ElephantMove(firstEnterX, firstEnterY, secondEnterX, secondEnterY, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
             }
         }
-        private void WASDandEnter(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count)
+        private void WASDandEnter(char[,] newTable, int cursorPositionY, int cursorPositionX, bool count)
         {
             while (true)
             {
