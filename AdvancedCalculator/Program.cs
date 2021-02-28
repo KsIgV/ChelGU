@@ -8,16 +8,20 @@ namespace TableOfFunctionValues
     {
         static void Main(string[] args)
         {
-            char[] validVariablesInAFunction = new char[] { '+', '-', '/', '*', '^', 'x' }; //закинуть в метод обратно, и убрать Х
-            string[] numberInFunction = ReadingTheFunctionFromTXT();
-            if (CheckAboutAnotherSymbol(numberInFunction, validVariablesInAFunction))
+            string[] op = new string[] { "+", "-", "/", "*", "^", ")", "(" }; //сделано без скобок в свитче
+            string functionTXT = ReadingTheFunctionFromTXT();
+            if (CheckAboutAnotherSymbol(functionTXT, op))
             {
+                char[] charsToTrim = { '=', 'y' };
+                string function = functionTXT.Trim(charsToTrim);
+                string[] numberInFunction = SearchNumbersInTXT(function, op);
+                FunctionValue(numberInFunction, function);
+
                 //Console.WriteLine("Введите шаг построения (значение, на которое увеличивает X).");
                 //int buildStep = Convert.ToInt32(Console.ReadLine());
                 //Console.WriteLine("X изначально равен 0. Введите диапазон значений X.");
                 //int rangeOfValues = Convert.ToInt32(Console.ReadLine());
                 //Console.Clear();
-                FunctionValue(numberInFunction);
                 //string[,] tableOfFunctionValues = new string[rangeOfValues + 1, 2]; // rangeOfValues + (ячейки под Х и У)
                 //TableValues(tableOfFunctionValues, rangeOfValues, buildStep);
                 //int maxLenght = 0;
@@ -26,97 +30,125 @@ namespace TableOfFunctionValues
                 //FillTableFigures(tableOfFunctionValues, rangeOfValues);
             }
         }
-        private static string[] ReadingTheFunctionFromTXT()
+        private static string ReadingTheFunctionFromTXT()
         {
             string path = @"D:\Project\KsIgV\ChelGU\AdvancedCalculator\input.txt";
-            string[] op = new string[] { "+", "-", "/", "*", "^" };
             using (var sr = new StreamReader(path))
+                return sr.ReadToEnd();
+        }
+        private static string[] SearchNumbersInTXT(string functionTXT, string[] op)
+        {
+            string functionWithoutOperations = functionTXT;
+            for (int i = 0; i < op.Length; i++)
             {
-                string functionTXT = sr.ReadToEnd();
-                string functionWithoutOperations = functionTXT;
-                for (int i = 0; i < op.Length; i++)
-                {
-                    functionWithoutOperations = functionWithoutOperations.Replace(op[i], "$");
-                }
-                string[] numberInFunction = functionWithoutOperations.Split("$");
-                return numberInFunction;
+                functionWithoutOperations = functionWithoutOperations.Replace(op[i], "$");
             }
+            return functionWithoutOperations.Split("$");
         }
         enum Operations
         {
-            plus = 0,
-            minus = 0,
-            multiplication = 1,
-            division = 1, 
-            degree = 2
+            plus = 1,
+            minus = 2,
+            multiplication = 3,
+            division = 4,
+            degree = 5
         }
-        static bool CheckAboutAnotherSymbol(string[] function, char[] validVariablesInAFunction)
+        static bool CheckAboutAnotherSymbol(string functionTXT, string[] op) //доделать полную проверку
         {
             int value = 2;
-            if (function[0] == "y" && function[1] == "=")
+            if (functionTXT[0] == 'y' && functionTXT[1] == '=')
             {
-                for (int i = 2; i < function.Length; i++)
+                for (int i = 2; i < functionTXT.Length; i++)
                 {
-                    if (())
+                    string elementFunctionTXT = Convert.ToString(functionTXT[i]);
+                    if (double.TryParse(elementFunctionTXT, out _) || elementFunctionTXT == "x")
                         value++;
-                    for (int j = 0; j < validVariablesInAFunction.Length; j++)
+                    for (int j = 0; j < op.Length; j++)
                     {
-                        if (())
+                        if (elementFunctionTXT == op[j])
                             value++;
                     }
                 }
             }
             else
                 Console.WriteLine("Перепроверьте заданную функцию. Возможно ваша функция начинается не с \"y=...\"");
-            if (value == function.Length)
+            if (value == functionTXT.Length)
                 return true;
             return false;
         }
-        static void FunctionValue(string[] function) //находим значение функции
+        static void FunctionValue(string[] numberInFunction, string function) //находим значение функции
         {
+            int count = 0;
+            bool numberOrOperation = true; //чтобы он формировал целое число
             List<object> numbersAndOperation = new List<object>();
             Stack<Operations> operations = new Stack<Operations>();
-            for (int i = 2; i < function.Length; i++) //начинаем со второй потому что сначала записано y= а потом уже вся нужная нам функция
+            for (int i = 0; i < function.Length; i++)
             {
-                if (function[i] == "x" || ())
+                string elementFunctionTXT = Convert.ToString(function[i]);
+                if ((double.TryParse(elementFunctionTXT, out _) || elementFunctionTXT == "x") && count < numberInFunction.Length && numberOrOperation == true)
                 {
-                    numbersAndOperation.Add(function[i]);
+                    numbersAndOperation.Add(numberInFunction[count]);
+                    count++;
+                    numberOrOperation = false;
                 }
                 else
                 {
-                    switch (function[i])
+                    switch (elementFunctionTXT)
                     {
                         case "+":
+                            numberOrOperation = true;
                             if (operations.Count == 0)
                             {
                                 operations.Push(Operations.plus);
                                 break;
                             }
-                            if (operations.Peek() <= Operations.plus)
+                            if (operations.Peek() > Operations.plus || operations.Peek() == Operations.plus || operations.Peek() == Operations.minus)
+                            {
+                                numbersAndOperation.Add(operations.Pop());
+                                if (operations.Count != 0 && (operations.Peek() == Operations.plus || operations.Peek() == Operations.minus))
+                                {
+                                    numbersAndOperation.Add(operations.Pop());
+                                }
                                 operations.Push(Operations.plus);
-                            numbersAndOperation.Add(operations.Pop());
+                            }
                             break;
                         case "-":
+                            numberOrOperation = true;
                             if (operations.Count == 0)
                             {
                                 operations.Push(Operations.minus);
                                 break;
                             }
-                            if (operations.Peek() <= Operations.minus)
+                            if (operations.Peek() > Operations.minus || operations.Peek() == Operations.plus || operations.Peek() == Operations.minus)
+                            {
+                                numbersAndOperation.Add(operations.Pop());
+                                if (operations.Count != 0 && (operations.Peek() == Operations.plus || operations.Peek() == Operations.minus))
+                                {
+                                    numbersAndOperation.Add(operations.Pop());
+                                }
                                 operations.Push(Operations.minus);
-                            numbersAndOperation.Add(operations.Pop());
+                            }
                             break;
                         case "/":
-                            if (operations.Count == 0)
+                            numberOrOperation = true;
+                            if (operations.Count != 0 && (operations.Peek() > Operations.division || operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication))
+                            {
+                                numbersAndOperation.Add(operations.Pop());
+                                if (operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication)
+                                {
+                                    numbersAndOperation.Add(operations.Pop());
+                                }
+                                operations.Push(Operations.division);
+                                break;
+                            }
+                            if (operations.Count == 0 || operations.Peek() < Operations.division)
                             {
                                 operations.Push(Operations.division);
                                 break;
                             }
-                            if (operations.Peek() <= Operations.division)
-                                operations.Push(Operations.division);
-                            numbersAndOperation.Add(operations.Pop());
                             break;
                         case "^":
+                            numberOrOperation = true;
                             if (operations.Count == 0)
                             {
                                 operations.Push(Operations.degree);
@@ -124,21 +156,35 @@ namespace TableOfFunctionValues
                             }
                             if (operations.Peek() < Operations.degree)
                                 operations.Push(Operations.degree);
-                            numbersAndOperation.Add(operations.Pop());
+                            else //пока я не разберусь со скобками он сюда никогда не зайдет
+                            {
+                                numbersAndOperation.Add(operations.Pop());
+                                operations.Push(Operations.degree);
+                            }
                             break;
                         case "*":
-                            if (operations.Count == 0)
+                            numberOrOperation = true;
+                            if (operations.Count != 0 && (operations.Peek() > Operations.multiplication || operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication))
+                            {
+                                numbersAndOperation.Add(operations.Pop());
+                                if (operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication)
+                                {
+                                    numbersAndOperation.Add(operations.Pop());
+                                }
+                                operations.Push(Operations.multiplication);
+                            }
+                            if (operations.Count == 0 || operations.Peek() < Operations.multiplication)
                             {
                                 operations.Push(Operations.multiplication);
                                 break;
                             }
-                            if (operations.Peek() <= Operations.multiplication)
-                                operations.Push(Operations.multiplication);
-                            numbersAndOperation.Add(operations.Pop());
                             break;
                     }
                 }
-                
+            }
+            while (operations.Count != 0)
+            {
+                numbersAndOperation.Add(operations.Pop());
             }
             foreach (object z in numbersAndOperation)
             {
