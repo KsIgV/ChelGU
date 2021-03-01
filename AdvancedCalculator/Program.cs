@@ -8,27 +8,42 @@ namespace TableOfFunctionValues
     {
         static void Main(string[] args)
         {
-            string[] op = new string[] { "+", "-", "/", "*", "^", ")", "(" }; //сделано без скобок в свитче
+            string[] op = new string[] { "+", "-", "/", "*", "^", ")", "(" }; 
             string functionTXT = ReadingTheFunctionFromTXT();
-            if (CheckAboutAnotherSymbol(functionTXT, op))
-            {
-                char[] charsToTrim = { '=', 'y' };
-                string function = functionTXT.Trim(charsToTrim);
-                string[] numberInFunction = SearchNumbersInTXT(function, op);
-                FunctionValue(numberInFunction, function);
+            char[] charsToTrim = { '=', 'y' };
+            string function = functionTXT.Trim(charsToTrim);
+            string[] numberInFunction = SearchNumbersInTXT(function, op);
+            int valueOperationsInBrace = SearchValueOperationsInBrace(function);
+            ParseExpression(numberInFunction, function, valueOperationsInBrace);
 
-                //Console.WriteLine("Введите шаг построения (значение, на которое увеличивает X).");
-                //int buildStep = Convert.ToInt32(Console.ReadLine());
-                //Console.WriteLine("X изначально равен 0. Введите диапазон значений X.");
-                //int rangeOfValues = Convert.ToInt32(Console.ReadLine());
-                //Console.Clear();
-                //string[,] tableOfFunctionValues = new string[rangeOfValues + 1, 2]; // rangeOfValues + (ячейки под Х и У)
-                //TableValues(tableOfFunctionValues, rangeOfValues, buildStep);
-                //int maxLenght = 0;
-                //MaxNumber(tableOfFunctionValues, rangeOfValues, maxLenght);
-                ////DrawTable(rangeOfValues, maxLenght);
-                //FillTableFigures(tableOfFunctionValues, rangeOfValues);
+            //Console.WriteLine("Введите шаг построения (значение, на которое увеличивает X).");
+            //int buildStep = Convert.ToInt32(Console.ReadLine());
+            //Console.WriteLine("X изначально равен 0. Введите диапазон значений X.");
+            //int rangeOfValues = Convert.ToInt32(Console.ReadLine());
+            //Console.Clear();
+            //string[,] tableOfFunctionValues = new string[rangeOfValues + 1, 2]; // rangeOfValues + (ячейки под Х и У)
+            //TableValues(tableOfFunctionValues, rangeOfValues, buildStep);
+            //int maxLenght = 0;
+            //MaxNumber(tableOfFunctionValues, rangeOfValues, maxLenght);
+            ////DrawTable(rangeOfValues, maxLenght);
+            //FillTableFigures(tableOfFunctionValues, rangeOfValues);
+        }
+        private static int SearchValueOperationsInBrace(string function)
+        {
+            int value = 0;
+            string[] op = new string[] { "+", "-", "/", "*", "^"};
+            int findFirstBrace = function.IndexOf('(');
+            int secondFirstBrace = function.IndexOf(')');
+            for (int i = 0; i < op.Length; i++)
+            {
+                function = function.Replace(op[i], "#");
             }
+            for (int i = findFirstBrace + 1; i < secondFirstBrace; i++)
+            {
+                if (function[i] == '#')
+                    value++;
+            }
+            return value;
         }
         private static string ReadingTheFunctionFromTXT()
         {
@@ -42,7 +57,9 @@ namespace TableOfFunctionValues
             for (int i = 0; i < op.Length; i++)
             {
                 functionWithoutOperations = functionWithoutOperations.Replace(op[i], "$");
+                functionWithoutOperations = functionWithoutOperations.Replace("$$", "$");
             }
+            functionWithoutOperations = functionWithoutOperations.Trim('$');
             return functionWithoutOperations.Split("$");
         }
         enum Operations
@@ -51,32 +68,11 @@ namespace TableOfFunctionValues
             minus = 2,
             multiplication = 3,
             division = 4,
-            degree = 5
+            degree = 5,
+            firstBrace = 6,
+            secondBrace = 7
         }
-        static bool CheckAboutAnotherSymbol(string functionTXT, string[] op) //доделать полную проверку
-        {
-            int value = 2;
-            if (functionTXT[0] == 'y' && functionTXT[1] == '=')
-            {
-                for (int i = 2; i < functionTXT.Length; i++)
-                {
-                    string elementFunctionTXT = Convert.ToString(functionTXT[i]);
-                    if (double.TryParse(elementFunctionTXT, out _) || elementFunctionTXT == "x")
-                        value++;
-                    for (int j = 0; j < op.Length; j++)
-                    {
-                        if (elementFunctionTXT == op[j])
-                            value++;
-                    }
-                }
-            }
-            else
-                Console.WriteLine("Перепроверьте заданную функцию. Возможно ваша функция начинается не с \"y=...\"");
-            if (value == functionTXT.Length)
-                return true;
-            return false;
-        }
-        static void FunctionValue(string[] numberInFunction, string function) //находим значение функции
+        static void ParseExpression(string[] numberInFunction, string function, int valueOperationsInBrace) //находим значение функции
         {
             int count = 0;
             bool numberOrOperation = true; //чтобы он формировал целое число
@@ -95,6 +91,22 @@ namespace TableOfFunctionValues
                 {
                     switch (elementFunctionTXT)
                     {
+                        case "(":
+                            numberOrOperation = true;
+                            operations.Push(Operations.firstBrace);
+                            break;
+                        case ")":
+                            numberOrOperation = true;
+                            if (operations.Count != 0)
+                            {
+                                while (operations.Count != 0 && operations.Peek() != Operations.firstBrace && valueOperationsInBrace > 0) //вытаскивает все операции стоящие перед скобокой (
+                                {
+                                    numbersAndOperation.Add(operations.Pop());
+                                    valueOperationsInBrace--;
+                                }
+                                operations.Push(Operations.secondBrace);
+                            }
+                            break;
                         case "+":
                             numberOrOperation = true;
                             if (operations.Count == 0)
@@ -102,7 +114,7 @@ namespace TableOfFunctionValues
                                 operations.Push(Operations.plus);
                                 break;
                             }
-                            if (operations.Peek() > Operations.plus || operations.Peek() == Operations.plus || operations.Peek() == Operations.minus)
+                            if (operations.Peek() >= Operations.plus || operations.Peek() == Operations.minus)
                             {
                                 numbersAndOperation.Add(operations.Pop());
                                 if (operations.Count != 0 && (operations.Peek() == Operations.plus || operations.Peek() == Operations.minus))
@@ -119,7 +131,7 @@ namespace TableOfFunctionValues
                                 operations.Push(Operations.minus);
                                 break;
                             }
-                            if (operations.Peek() > Operations.minus || operations.Peek() == Operations.plus || operations.Peek() == Operations.minus)
+                            if (operations.Peek() >= Operations.minus || operations.Peek() == Operations.plus)
                             {
                                 numbersAndOperation.Add(operations.Pop());
                                 if (operations.Count != 0 && (operations.Peek() == Operations.plus || operations.Peek() == Operations.minus))
@@ -131,7 +143,7 @@ namespace TableOfFunctionValues
                             break;
                         case "/":
                             numberOrOperation = true;
-                            if (operations.Count != 0 && (operations.Peek() > Operations.division || operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication))
+                            if (operations.Count != 0 && (operations.Peek() >= Operations.division || operations.Peek() == Operations.multiplication))
                             {
                                 numbersAndOperation.Add(operations.Pop());
                                 if (operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication)
@@ -144,19 +156,16 @@ namespace TableOfFunctionValues
                             if (operations.Count == 0 || operations.Peek() < Operations.division)
                             {
                                 operations.Push(Operations.division);
-                                break;
                             }
                             break;
                         case "^":
                             numberOrOperation = true;
-                            if (operations.Count == 0)
+                            if (operations.Count == 0 || operations.Peek() < Operations.degree)
                             {
                                 operations.Push(Operations.degree);
                                 break;
                             }
-                            if (operations.Peek() < Operations.degree)
-                                operations.Push(Operations.degree);
-                            else //пока я не разберусь со скобками он сюда никогда не зайдет
+                            if (operations.Peek() >= Operations.degree) 
                             {
                                 numbersAndOperation.Add(operations.Pop());
                                 operations.Push(Operations.degree);
@@ -164,19 +173,19 @@ namespace TableOfFunctionValues
                             break;
                         case "*":
                             numberOrOperation = true;
-                            if (operations.Count != 0 && (operations.Peek() > Operations.multiplication || operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication))
+                            if (operations.Count != 0 && (operations.Peek() >= Operations.multiplication || operations.Peek() == Operations.division))
                             {
                                 numbersAndOperation.Add(operations.Pop());
-                                if (operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication)
+                                if (operations.Count != 0 && (operations.Peek() == Operations.division || operations.Peek() == Operations.multiplication))
                                 {
                                     numbersAndOperation.Add(operations.Pop());
                                 }
                                 operations.Push(Operations.multiplication);
+                                break;
                             }
                             if (operations.Count == 0 || operations.Peek() < Operations.multiplication)
                             {
                                 operations.Push(Operations.multiplication);
-                                break;
                             }
                             break;
                     }
@@ -186,9 +195,9 @@ namespace TableOfFunctionValues
             {
                 numbersAndOperation.Add(operations.Pop());
             }
-            foreach (object z in numbersAndOperation)
+            foreach (var item in numbersAndOperation)
             {
-                Console.WriteLine(z);
+                Console.WriteLine(item);
             }
         }
         static string[,] TableValues(string[,] tableOfFunctionValues, int rangeOfValues, int buildStep, string function) // создаем массив в котором храниться значение Х и У
