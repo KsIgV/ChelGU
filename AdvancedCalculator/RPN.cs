@@ -5,6 +5,7 @@ namespace AdvancedCalculator
 {
     class RPN
     {
+        List<object> numbersAndOperation = new List<object>();
         public enum Operations
         {
             plus = 1,
@@ -15,11 +16,10 @@ namespace AdvancedCalculator
             firstBrace = 6,
             secondBrace = 7
         }
-        public void ParseExpression(string[] numberInFunction, string function, int valueOperationsInBrace) //находим значение функции
+        public List<object> ParseExpression(string[] numberInFunction, string function, int valueOperationsInBrace) //находим значение функции
         {
             int count = 0;
             bool numberOrOperation = true; //чтобы он формировал целое число
-            List<object> numbersAndOperation = new List<object>();
             Stack<Operations> operations = new Stack<Operations>();
             for (int i = 0; i < function.Length; i++)
             {
@@ -86,6 +86,11 @@ namespace AdvancedCalculator
                             break;
                         case "/":
                             numberOrOperation = true;
+                            if (operations.Peek() == Operations.firstBrace || operations.Count == 0 || operations.Peek() < Operations.division)
+                            {
+                                operations.Push(Operations.division);
+                                break;
+                            }
                             if (operations.Count != 0 && (operations.Peek() >= Operations.division || operations.Peek() == Operations.multiplication))
                             {
                                 numbersAndOperation.Add(operations.Pop());
@@ -95,10 +100,6 @@ namespace AdvancedCalculator
                                 }
                                 operations.Push(Operations.division);
                                 break;
-                            }
-                            if (operations.Count == 0 || operations.Peek() < Operations.division)
-                            {
-                                operations.Push(Operations.division);
                             }
                             break;
                         case "^":
@@ -116,6 +117,11 @@ namespace AdvancedCalculator
                             break;
                         case "*":
                             numberOrOperation = true;
+                            if (operations.Peek() == Operations.firstBrace || operations.Count == 0 || operations.Peek() < Operations.multiplication)
+                            {
+                                operations.Push(Operations.multiplication);
+                                break;
+                            }
                             if (operations.Count != 0 && (operations.Peek() >= Operations.multiplication || operations.Peek() == Operations.division))
                             {
                                 numbersAndOperation.Add(operations.Pop());
@@ -126,10 +132,6 @@ namespace AdvancedCalculator
                                 operations.Push(Operations.multiplication);
                                 break;
                             }
-                            if (operations.Count == 0 || operations.Peek() < Operations.multiplication)
-                            {
-                                operations.Push(Operations.multiplication);
-                            }
                             break;
                     }
                 }
@@ -138,10 +140,58 @@ namespace AdvancedCalculator
             {
                 numbersAndOperation.Add(operations.Pop());
             }
-            foreach (var item in numbersAndOperation)
+            return numbersAndOperation;
+        }
+        public List<object> Calculate()
+        {
+            double firstNumber;
+            double secondNumber;
+            decimal result = 0;
+            while (numbersAndOperation.Count != 1)
             {
-                Console.WriteLine(item);
+                for (int i = 0; i < numbersAndOperation.Count - 1; i++)
+                {
+                    //string number = Convert.ToString(numbersAndOperation[i]);
+                    //string operation = Convert.ToString(numbersAndOperation[i + 1]);
+                    if (Convert.ToString(numbersAndOperation[i + 1]) == "firstBrace" || Convert.ToString(numbersAndOperation[i + 1]) == "secondBrace")
+                    {
+                        numbersAndOperation.RemoveAt(i + 1);
+                    }
+                    if (Convert.ToString(numbersAndOperation[i]) == "firstBrace" || Convert.ToString(numbersAndOperation[i]) == "secondBrace")
+                    {
+                        numbersAndOperation.RemoveAt(i);
+                    }
+                    if (double.TryParse(Convert.ToString(numbersAndOperation[i]), out _) && !double.TryParse(Convert.ToString(numbersAndOperation[i + 1]), out _))
+                    {
+                        firstNumber = Convert.ToDouble(numbersAndOperation[i - 1]);
+                        secondNumber = Convert.ToDouble(numbersAndOperation[i]);
+                        switch (Convert.ToString(numbersAndOperation[i + 1]))
+                        {
+                            case "plus":
+                                result = (decimal)(firstNumber + secondNumber);
+                                break;
+                            case "minus":
+                                result = (decimal)(firstNumber - secondNumber);
+                                break;
+                            case "multiplication":
+                                result = (decimal)(firstNumber * secondNumber);
+                                break;
+                            case "division":
+                                result = (decimal)(firstNumber / secondNumber);
+                                break;
+                            case "degree":
+                                result = (decimal)Math.Pow(firstNumber, secondNumber);
+                                break;
+                        }
+                        numbersAndOperation.RemoveAt(i - 1);
+                        numbersAndOperation.RemoveAt(i);
+                        numbersAndOperation.Insert(i - 1, result);
+                        numbersAndOperation.RemoveAt(i);
+                        i = 0;
+                    }
+                }
             }
+            return numbersAndOperation;
         }
     }
 }
