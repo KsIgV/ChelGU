@@ -7,33 +7,33 @@ namespace MovesInChess
         WorkWithFIles workWithFIles = new WorkWithFIles();
         public void DrawTable() //рисуем таблицу
         {
-            char[,] newTable = workWithFIles.OpenForTXT();
+            string[,] newTable = workWithFIles.OpenForTXT();
             for (int i = 0; i < newTable.GetLength(0); i++)
             {
-                string UpLeftLine = "┌";
-                string UpRightLine = "┐";
-                string DownLeftLine = "└";
-                string DownRightLine = "┘";
+                string upLeftLine = "┌";
+                string upRightLine = "┐";
+                string downLeftLine = "└";
+                string downRightLine = "┘";
                 for (int j = 0; j < newTable.GetLength(1); j++)
                 {
-                    Console.SetCursorPosition(j * 2, i * 2);
+                    Console.SetCursorPosition(j * 3, i * 2);
                     if (i != 0)
                     {
-                        UpLeftLine = "├";
-                        UpRightLine = "┤";
+                        upLeftLine = "├";
+                        upRightLine = "┤";
                     }
                     if (j != 0)
                     {
-                        UpLeftLine = "┬";
-                        DownLeftLine = "┴";
+                        upLeftLine = "┬";
+                        downLeftLine = "┴";
                     }
                     if (i != 0 && j != 0)
-                        UpLeftLine = "┼";
-                    Console.WriteLine(UpLeftLine + "─" + UpRightLine);
-                    Console.SetCursorPosition(j * 2, Console.CursorTop);
-                    Console.WriteLine("│" + " " + "│");
-                    Console.SetCursorPosition(j * 2, Console.CursorTop);
-                    Console.Write(DownLeftLine + "─" + DownRightLine);
+                        upLeftLine = "┼";
+                    Console.WriteLine(upLeftLine + "──" + upRightLine);
+                    Console.SetCursorPosition(j * 3, Console.CursorTop);
+                    Console.WriteLine("│" + "  " + "│");
+                    Console.SetCursorPosition(j * 3, Console.CursorTop);
+                    Console.Write(downLeftLine + "──" + downRightLine);
                 }
             }
         }

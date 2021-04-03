@@ -6,26 +6,26 @@ namespace MovesInChess
     class WorkWithFIles //работа с файлами
     {
         private string path = @"ChessBoard.txt";
-        private char[,] StartingPositionOfTheFiguresOnTheBoard() //создает стартовый массив
+        private string[,] StartingPositionOfTheFiguresOnTheBoard() //создает стартовый массив
         {
-            char[,] newTable = new char[8, 8]
+            string[,] newTable = new string[8, 8]
             {
-            {'R', 'L', 'E', 'Q', 'K', 'E', 'L', 'R'}, //a
-            {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}, //b
-            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //c
-            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}, //d
-            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-            {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-            {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-            {'R', 'L', 'E', 'Q', 'K', 'E', 'L', 'R'}
+            {"R1", "H1", "E1", "Q1", "K1", "E1", "H1", "R1"}, //a
+            {"P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1"}, //b
+            {"  ", "  ", "  ", "  ", "  ", "  ", "  ", "  "}, //c
+            {"  ", "  ", "  ", "  ", "  ", "  ", "  ", "  "}, //d
+            {"  ", "  ", "  ", "  ", "  ", "  ", "  ", "  "},
+            {"  ", "  ", "  ", "  ", "  ", "  ", "  ", "  "},
+            {"P2", "P2", "P2", "P2", "P2", "P2", "P2", "P2"},
+            {"R2", "H2", "E2", "Q2", "K2", "E2", "H2", "R2"}
             };
             return newTable;
         }
-        public char[,] OpenForTXT() //открывает файл если имеется
+        public string[,] OpenForTXT() //открывает файл если имеется
         {
             if (File.Exists(path))
             {
-                char[,] newTable = new char[8, 8];
+                string[,] newTable = new string[8, 8];
                 using (StreamReader popa = new StreamReader(path))
                 {
                     string str;
@@ -35,7 +35,7 @@ namespace MovesInChess
                         string[] text = str.Split('.');
                         for (int j = 0; j < newTable.GetLength(1); j++)
                         {
-                            newTable[i, j] = Convert.ToChar(text[j]);
+                            newTable[i, j] = text[j];
                         }
                     }
                 }
@@ -44,7 +44,7 @@ namespace MovesInChess
             else
                 return StartingPositionOfTheFiguresOnTheBoard(); //возвращает новый стартовый массив
         }
-        public void SaveForTXT(char[,] newTable) //записывает файл в тхт
+        public void SaveForTXT(string[,] newTable) //записывает файл в тхт
         {
             using StreamWriter sw = new StreamWriter(path, false);
             for (int i = 0; i < newTable.GetLength(0); i++)

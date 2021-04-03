@@ -14,14 +14,14 @@ namespace MovesInChess
         WorkWithFIles workWithFIles = new WorkWithFIles();
         public void CycleForArray() //делает ходы бесконечностью
         {
-            char[,] newTable = workWithFIles.OpenForTXT();
+            string[,] newTable = workWithFIles.OpenForTXT();
             ChessBoard chessBoard = new ChessBoard();
             chessBoard.DrawTable();
             FillTableFigures(newTable);
             Console.SetCursorPosition(1, 1);
             WASDandEnter(newTable, cursorPositionY, cursorPositionX, count);
         }
-        private void FillTableFigures(char[,] newTable) //заносим в таблицу координаты 
+        private void FillTableFigures(string[,] newTable) //заносим в таблицу координаты 
         {
             int cursorPositionY = 1;
             for (int i = 0; i < newTable.GetLength(0); i++)
@@ -31,7 +31,7 @@ namespace MovesInChess
                 {
                     Console.SetCursorPosition(cursorPositionX, cursorPositionY);
                     Console.Write(newTable[i, j]);
-                    cursorPositionX += 2;
+                    cursorPositionX += 3;
                 }
                 cursorPositionY += 2;
             }
@@ -42,21 +42,21 @@ namespace MovesInChess
         {
             if (!count)
             {
-                firstEnterY = cursorPositionY / 2;
+                firstEnterY = cursorPositionY / 3;
                 firstEnterX = cursorPositionX / 2;
                 count = true;
             }
             else
             {
-                secondEnterY = cursorPositionY / 2;
+                secondEnterY = cursorPositionY / 3;
                 secondEnterX = cursorPositionX / 2;
                 count = false;
             }
             return count;
         }
-        private int CheckPosition(char[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
+        private int CheckPosition(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
         {
-            if (cursorPositionX > 16 || cursorPositionY > 16 || cursorPositionY <= 0 || cursorPositionX <= 0)
+            if (cursorPositionX > 16 || cursorPositionY > 22 || cursorPositionY <= 0 || cursorPositionX <= 0)
             {
                 cursorPositionY = 1;
                 cursorPositionX = 1;
@@ -88,24 +88,29 @@ namespace MovesInChess
         {
             return move1 + move2 == 1 || move1 == 1 && move2 == 1;
         }
-        public bool PawnMove(int firstEnterX, int move1, int move2) // пешка
+        public bool PawnMove(int secondEnterX, int firstEnterX, int move1, int move2, string figure) // пешка
         {
-            return (move1 == 0 && move2 == 1) || (move2 == 2 && move1 == 0 && (firstEnterX == 1 || firstEnterX == 6));
+            if ((figure[1] == '1' && firstEnterX > secondEnterX) || (figure[1] == '2' && firstEnterX < secondEnterX))
+            {
+                return false;
+            }
+            else
+                return (move1 == 0 && move2 == 1) || (move2 == 2 && move1 == 0 && (firstEnterX == 1 || firstEnterX == 6));
         }
-        private void MoveOfAPiece(char[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) //меняет элементы массива
+        private void MoveOfAPiece(string[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) //меняет элементы массива
         {
-            if (newTable[secondEnterX, secondEnterY] == ' ')
+            if (newTable[secondEnterX, secondEnterY] == "  ")
             {
                 newTable[secondEnterX, secondEnterY] = newTable[firstEnterX, firstEnterY];
-                newTable[firstEnterX, firstEnterY] = ' ';
+                newTable[firstEnterX, firstEnterY] = "  ";
             }
         }
-        private void NameAndCheckFigure(char[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX)
+        private void NameAndCheckFigure(string[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX)
         {
-            char figure = newTable[firstEnterX, firstEnterY]; // берем значение фигуры
+            string figure = newTable[firstEnterX, firstEnterY]; // берем значение фигуры
             int move1 = Math.Abs(firstEnterY - secondEnterY); // С B
             int move2 = Math.Abs(firstEnterX - secondEnterX); // 1 5
-            switch (figure)
+            switch (figure[0])
             {
                 case 'K':
                     if (KingMove(move1, move2))
@@ -120,7 +125,7 @@ namespace MovesInChess
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
                 case 'P':
-                    if (PawnMove(firstEnterX, move1, move2))
+                    if (PawnMove(secondEnterX, firstEnterX, move1, move2, figure))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
                 case 'R':
@@ -133,7 +138,7 @@ namespace MovesInChess
                     break;
             }
         }
-        private void WASDandEnter(char[,] newTable, int cursorPositionY, int cursorPositionX, bool count)
+        private void WASDandEnter(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count)
         {
             while (true)
             {
@@ -148,7 +153,7 @@ namespace MovesInChess
                         CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.A:
-                        cursorPositionY -= 2;
+                        cursorPositionY -= 3;
                         CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.S:
@@ -156,7 +161,7 @@ namespace MovesInChess
                         CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.D:
-                        cursorPositionY += 2;
+                        cursorPositionY += 3;
                         CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.Enter: //проходит его два раза абсолютно ненужных
