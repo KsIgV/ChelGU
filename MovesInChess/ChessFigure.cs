@@ -4,13 +4,13 @@ namespace MovesInChess
 {
     class ChessFigure
     {
-        public bool count = false;
-        public int secondEnterY;
-        public int secondEnterX;
-        public int firstEnterX;
-        public int firstEnterY;
-        public int cursorPositionY = 1;
-        public int cursorPositionX = 1;
+        private bool count = false; 
+        private int secondEnterY;
+        private int secondEnterX;
+        private int firstEnterX;
+        private int firstEnterY;
+        private int cursorPositionY = 1;
+        private int cursorPositionX = 1;
         WorkWithFIles workWithFIles = new WorkWithFIles();
         public void CycleForArray() //делает ходы бесконечностью
         {
@@ -88,9 +88,9 @@ namespace MovesInChess
         {
             return move1 + move2 == 1 || move1 == 1 && move2 == 1;
         }
-        public bool PawnMove(int firstEnterY, int move1, int move2) // пешка
+        public bool PawnMove(int firstEnterX, int move1, int move2) // пешка
         {
-            return ((firstEnterY == '2' || firstEnterY == '7') && (move2 == 1 || move2 == 2) && move1 == 0) || (move1 == 0 && move2 == 1);
+            return (move1 == 0 && move2 == 1) || (move2 == 2 && move1 == 0 && (firstEnterX == 1 || firstEnterX == 6));
         }
         private void MoveOfAPiece(char[,] newTable, int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) //меняет элементы массива
         {
@@ -120,7 +120,7 @@ namespace MovesInChess
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
                 case 'P':
-                    if (PawnMove(firstEnterY, move1, move2))
+                    if (PawnMove(firstEnterX, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
                 case 'R':
@@ -159,7 +159,7 @@ namespace MovesInChess
                         cursorPositionY += 2;
                         CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
                         break;
-                    case ConsoleKey.Enter:
+                    case ConsoleKey.Enter: //проходит его два раза абсолютно ненужных
                         CheckEnterCoordinate(ref firstEnterY, ref firstEnterX, ref secondEnterY, ref secondEnterX, ref cursorPositionY, ref cursorPositionX, ref count);
                         NameAndCheckFigure(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                         FillTableFigures(newTable);

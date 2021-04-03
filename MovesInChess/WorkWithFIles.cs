@@ -5,7 +5,7 @@ namespace MovesInChess
 {
     class WorkWithFIles //работа с файлами
     {
-        private string path = @"D:\Project\KsIgV\ChelGU\MovesInChess\ChessBoard.txt";
+        private string path = @"ChessBoard.txt";
         private char[,] StartingPositionOfTheFiguresOnTheBoard() //создает стартовый массив
         {
             char[,] newTable = new char[8, 8]
