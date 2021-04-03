@@ -5,7 +5,7 @@ namespace AdvancedCalculator
 {
     class RPN
     {
-        List<object> numbersAndOperation = new List<object>();
+        private List<object> numbersAndOperation = new List<object>();
         public enum Operations
         {
             plus = 1,

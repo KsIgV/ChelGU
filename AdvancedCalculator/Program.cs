@@ -19,8 +19,11 @@ namespace AdvancedCalculator
             string[] numberInFunction = Search.SearchNumbersInTXT(function);
             int valueOperationsInBrace = Search.SearchValueOperationsInBrace(function);
             rPN.ParseExpression(numberInFunction, function, valueOperationsInBrace);
-            object[] result = rPN.Calculate().ToArray();
-            Console.WriteLine(result[0]);
+            Console.Clear();
+            foreach (object result in rPN.Calculate())
+                Console.WriteLine($"Выражение: {functionTXT}\nх = {valueX}\nРезультат равен: {result}");
+            //object[] result = rPN.Calculate().ToArray();
+            //Console.WriteLine(result);
         }
     }
 }
