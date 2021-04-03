@@ -67,28 +67,28 @@ namespace MovesInChess
                 Console.SetCursorPosition(cursorPositionY, cursorPositionX);
             return cursorPositionX;
         }
-        public bool HorseMove(int move1, int move2) //конь
+        private bool HorseMove(int move1, int move2) //конь
         {
             return ((move1 == 2) && (move2 == 1))
             || ((move1 == 1) && (move2 == 2));
         }
-        public bool ElephantMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // слон
+        private bool ElephantMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // слон
         {
             return move1 == move2 && firstEnterX != secondEnterX && firstEnterY != secondEnterY;
         }
-        public bool RookMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) // ладья
+        private bool RookMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX) // ладья
         {
             return firstEnterX == secondEnterX || firstEnterY == secondEnterY;
         }
-        public bool QueenMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // ферзь
+        private bool QueenMove(int firstEnterY, int firstEnterX, int secondEnterY, int secondEnterX, int move1, int move2) // ферзь
         {
             return move1 == move2 || firstEnterX == secondEnterX || firstEnterY == secondEnterY;
         }
-        public bool KingMove(int move1, int move2) // король
+        private bool KingMove(int move1, int move2) // король
         {
             return move1 + move2 == 1 || move1 == 1 && move2 == 1;
         }
-        public bool PawnMove(int secondEnterX, int firstEnterX, int move1, int move2, string figure) // пешка
+        private bool PawnMove(int secondEnterX, int firstEnterX, int move1, int move2, string figure) // пешка
         {
             if ((figure[1] == '1' && firstEnterX > secondEnterX) || (figure[1] == '2' && firstEnterX < secondEnterX))
             {
