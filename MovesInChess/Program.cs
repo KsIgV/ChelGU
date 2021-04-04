@@ -9,8 +9,6 @@ namespace MovesInChess
         {
             Menu menu = new Menu();
             menu.Screen();
-            ChessFigure chessFigure = new ChessFigure();
-            chessFigure.CycleForArray();
         }
     }
 }
