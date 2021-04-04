@@ -54,7 +54,7 @@ namespace MovesInChess
             }
             return count;
         }
-        private int CheckPosition(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
+        private int CheckPositionInTable(string[,] newTable, int cursorPositionY, int cursorPositionX, bool count) //проверяет чтоб мы далеко не ушли с доски
         {
             if (cursorPositionX > 16 || cursorPositionY > 22 || cursorPositionY <= 0 || cursorPositionX <= 0)
             {
@@ -120,7 +120,7 @@ namespace MovesInChess
                     if (QueenMove(firstEnterX, firstEnterY, secondEnterX, secondEnterY, move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
-                case 'L':
+                case 'H':
                     if (HorseMove(move1, move2))
                         MoveOfAPiece(newTable, firstEnterY, firstEnterX, secondEnterY, secondEnterX);
                     break;
@@ -144,25 +144,25 @@ namespace MovesInChess
             {
                 switch (Console.ReadKey(true).Key)
                 {
-                    case ConsoleKey.Escape:
-                        workWithFIles.SaveForTXT(newTable);
+                    case ConsoleKey.Escape: //если в главном меню есть выход, то какова вероятность что мне это здесь нужно?
+                        workWithFIles.SaveForTXT(newTable); 
                         Environment.Exit(0);
                         break;
                     case ConsoleKey.W:
                         cursorPositionX -= 2;
-                        CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
+                        CheckPositionInTable(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.A:
                         cursorPositionY -= 3;
-                        CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
+                        CheckPositionInTable(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.S:
                         cursorPositionX += 2;
-                        CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
+                        CheckPositionInTable(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.D:
                         cursorPositionY += 3;
-                        CheckPosition(newTable, cursorPositionY, cursorPositionX, count);
+                        CheckPositionInTable(newTable, cursorPositionY, cursorPositionX, count);
                         break;
                     case ConsoleKey.Enter: //проходит его два раза абсолютно ненужных
                         CheckEnterCoordinate(ref firstEnterY, ref firstEnterX, ref secondEnterY, ref secondEnterX, ref cursorPositionY, ref cursorPositionX, ref count);
