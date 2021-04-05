@@ -57,6 +57,11 @@ namespace MovesInChess
                         {
                             if (File.Exists("ChessBoard.txt"))
                                 File.Delete("ChessBoard.txt");
+                            Console.WriteLine("What's your name?"); //есть ощущение что эти четыре строки должны быть в другом месте
+                            string nameFirstPerson = Console.ReadLine();
+                            Console.WriteLine("What's your friend's name?");
+                            string nameSecondPerson = Console.ReadLine();
+                            Console.Clear();
                             chessFigure.CycleForArray();
                         }
                         if (cursorPositionX == 7) //cotionue
@@ -81,7 +86,6 @@ namespace MovesInChess
         }
         private void ItemHighlight(string[] screenChess, string[] menu)
         {
-            // I DON'T FUCKING IDEA ПЕРЕПРОВЕРЬ ХОДЫ ТАМ КАКАЯ ТО ХЕРЬ
             Console.Clear();
             for (int i = 0; i < screenChess.Length; i++)
             {
