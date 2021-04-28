@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace MovesInChess
@@ -12,8 +11,8 @@ namespace MovesInChess
         {
             string[] screenChess = {"╔═══╣   ╦    ╦   ╔═══╣   ╔═══╣   ╔═══╣", "║       ║    ║   ║       ║       ║    ", "║       ╠════╣   ╠═══╣   ╚═══╗   ╚═══╗", "║       ║    ║   ║           ║       ║","╚═══╣   ╩    ╩   ╚═══╣   ╠═══╝   ╠═══╝"};
             string[] menu = { "               NEW GAME", "               CONTINUE", "                RATING", "                 EXIT" };
-            string[,] newTable = workWithFIles.OpenForTXT();
             ItemHighlight(screenChess, menu);
+            string[,] newTable = workWithFIles.OpenForTXT();
             WASDScreen(newTable, screenChess, menu);
         }
         private void WASDScreen(string[,] newTable, string[] screenChess, string[] menu)
@@ -57,14 +56,11 @@ namespace MovesInChess
                         {
                             if (File.Exists("ChessBoard.txt"))
                                 File.Delete("ChessBoard.txt");
-                            Console.WriteLine("What's your name?"); //есть ощущение что эти четыре строки должны быть в другом месте
-                            string nameFirstPerson = Console.ReadLine();
-                            Console.WriteLine("What's your friend's name?");
-                            string nameSecondPerson = Console.ReadLine();
+                            InfoAbouPlayers();
                             Console.Clear();
                             chessFigure.CycleForArray();
                         }
-                        if (cursorPositionX == 7) //cotionue
+                        if (cursorPositionX == 7) //continue
                             chessFigure.CycleForArray();
                         if (cursorPositionX == 8) //rating
                             Console.WriteLine("Однажды тут будет рейтинг побед");
@@ -76,6 +72,13 @@ namespace MovesInChess
                         break;
                 }
             }
+        }
+        private void InfoAbouPlayers()
+        {
+            Console.WriteLine("Enter a name for the player PLAYER1."); 
+            string player1 = Console.ReadLine();
+            Console.WriteLine("Enter a name for the player PLAYER2.");
+            string player2 = Console.ReadLine();
         }
         private bool CheckPositionInMenu()
         {
