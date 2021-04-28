@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace MovesInChess
@@ -12,8 +11,8 @@ namespace MovesInChess
         {
             string[] screenChess = {"╔═══╣   ╦    ╦   ╔═══╣   ╔═══╣   ╔═══╣", "║       ║    ║   ║       ║       ║    ", "║       ╠════╣   ╠═══╣   ╚═══╗   ╚═══╗", "║       ║    ║   ║           ║       ║","╚═══╣   ╩    ╩   ╚═══╣   ╠═══╝   ╠═══╝"};
             string[] menu = { "               NEW GAME", "               CONTINUE", "                RATING", "                 EXIT" };
-            string[,] newTable = workWithFIles.OpenForTXT();
             ItemHighlight(screenChess, menu);
+            string[,] newTable = workWithFIles.OpenForTXT();
             WASDScreen(newTable, screenChess, menu);
         }
         private void WASDScreen(string[,] newTable, string[] screenChess, string[] menu)
@@ -57,9 +56,11 @@ namespace MovesInChess
                         {
                             if (File.Exists("ChessBoard.txt"))
                                 File.Delete("ChessBoard.txt");
+                            InfoAbouPlayers();
+                            Console.Clear();
                             chessFigure.CycleForArray();
                         }
-                        if (cursorPositionX == 7) //cotionue
+                        if (cursorPositionX == 7) //continue
                             chessFigure.CycleForArray();
                         if (cursorPositionX == 8) //rating
                             Console.WriteLine("Однажды тут будет рейтинг побед");
@@ -72,6 +73,13 @@ namespace MovesInChess
                 }
             }
         }
+        private void InfoAbouPlayers()
+        {
+            Console.WriteLine("Enter a name for the player PLAYER1."); 
+            string player1 = Console.ReadLine();
+            Console.WriteLine("Enter a name for the player PLAYER2.");
+            string player2 = Console.ReadLine();
+        }
         private bool CheckPositionInMenu()
         {
             if (cursorPositionX >= 6 && cursorPositionX <= 9)
@@ -81,7 +89,6 @@ namespace MovesInChess
         }
         private void ItemHighlight(string[] screenChess, string[] menu)
         {
-            // I DON'T FUCKING IDEA ПЕРЕПРОВЕРЬ ХОДЫ ТАМ КАКАЯ ТО ХЕРЬ
             Console.Clear();
             for (int i = 0; i < screenChess.Length; i++)
             {
