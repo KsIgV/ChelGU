@@ -5,67 +5,50 @@ namespace MovesInChess
 {
     class Menu
     {
-        private int cursorPositionX = 6;
-        private WorkWithFIles workWithFIles = new WorkWithFIles();
         public void Screen()
         {
-            string[] screenChess = {"╔═══╣   ╦    ╦   ╔═══╣   ╔═══╣   ╔═══╣", "║       ║    ║   ║       ║       ║    ", "║       ╠════╣   ╠═══╣   ╚═══╗   ╚═══╗", "║       ║    ║   ║           ║       ║","╚═══╣   ╩    ╩   ╚═══╣   ╠═══╝   ╠═══╝"};
-            string[] menu = { "               NEW GAME", "               CONTINUE", "                RATING", "                 EXIT" };
-            ItemHighlight(screenChess, menu);
-            string[,] newTable = workWithFIles.OpenForTXT();
-            WASDScreen(newTable, screenChess, menu);
+            string[] screenNameGame = {"╔═══╣   ╦    ╦   ╔═══╣   ╔═══╣   ╔═══╣", "║       ║    ║   ║       ║       ║    ", "║       ╠════╣   ╠═══╣   ╚═══╗   ╚═══╗", "║       ║    ║   ║           ║       ║","╚═══╣   ╩    ╩   ╚═══╣   ╠═══╝   ╠═══╝"};
+            string[] screenMenu = { "NEW GAME", "CONTINUE", "RATING", "EXIT" };
+            int cursorPosition = 0;
+            ItemHighlight(cursorPosition, screenNameGame, screenMenu);
+            WASDScreen(cursorPosition, screenNameGame, screenMenu);
         }
-        private void WASDScreen(string[,] newTable, string[] screenChess, string[] menu)
+        private void WASDScreen(int cursorPosition, string[] screenChess, string[] screenMenu)
         {
-            ChessFigure chessFigure = new ChessFigure();
             while (true)
             {
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.W:
-                        cursorPositionX -= 1;
-                        if (CheckPositionInMenu())
-                        ItemHighlight(screenChess, menu);
+                        cursorPosition -= 1;
+                        if (CheckPositionInMenu(cursorPosition))
+                        ItemHighlight(cursorPosition, screenChess, screenMenu);
                         else
-                            cursorPositionX += 1;
+                            cursorPosition += 1;
                         break;
                     case ConsoleKey.S:
-                        cursorPositionX += 1;
-                        if (CheckPositionInMenu())
-                            ItemHighlight(screenChess, menu);
+                        cursorPosition += 1;
+                        if (CheckPositionInMenu(cursorPosition))
+                            ItemHighlight(cursorPosition, screenChess, screenMenu);
                         else
-                            cursorPositionX -= 1;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        cursorPositionX -= 1;
-                        if (CheckPositionInMenu())
-                            ItemHighlight(screenChess, menu);
-                        else
-                            cursorPositionX += 1;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        cursorPositionX += 1;
-                        if (CheckPositionInMenu())
-                            ItemHighlight(screenChess, menu);
-                        else
-                            cursorPositionX -= 1;
+                            cursorPosition -= 1;
                         break;
                     case ConsoleKey.Enter:
-                        Console.Clear();
-                        if (cursorPositionX == 6) //new game
+                        ChessFigure chessFigure = new ChessFigure();
+                        if (cursorPosition == 0) //new game
                         {
                             if (File.Exists("ChessBoard.txt"))
                                 File.Delete("ChessBoard.txt");
-                            InfoAbouPlayers();
-                            Console.Clear();
                             chessFigure.CycleForArray();
                         }
-                        if (cursorPositionX == 7) //continue
+                        if (cursorPosition == 1) //continue
                             chessFigure.CycleForArray();
-                        if (cursorPositionX == 8) //rating
-                            Console.WriteLine("Однажды тут будет рейтинг побед");
-                        if (cursorPositionX == 9) //exit
+                        if (cursorPosition == 2) //rating
+                            Console.WriteLine("Однажды тут будет рейтинг побед.");
+                        if (cursorPosition == 3) //exit
                         {
+                            WorkWithFIles workWithFIles = new WorkWithFIles();
+                            string[,] newTable = workWithFIles.OpenForTXT();
                             workWithFIles.SaveForTXT(newTable);
                             Environment.Exit(0);
                         }
@@ -73,21 +56,14 @@ namespace MovesInChess
                 }
             }
         }
-        private void InfoAbouPlayers()
+        private bool CheckPositionInMenu(int cursorPosition)
         {
-            Console.WriteLine("Enter a name for the player PLAYER1."); 
-            string player1 = Console.ReadLine();
-            Console.WriteLine("Enter a name for the player PLAYER2.");
-            string player2 = Console.ReadLine();
-        }
-        private bool CheckPositionInMenu()
-        {
-            if (cursorPositionX >= 6 && cursorPositionX <= 9)
+            if (cursorPosition >= 0 && cursorPosition <= 3)
                 return true;
             else
                 return false;
         }
-        private void ItemHighlight(string[] screenChess, string[] menu)
+        private void ItemHighlight(int cursorPosition, string[] screenChess, string[] menu)
         {
             Console.Clear();
             for (int i = 0; i < screenChess.Length; i++)
@@ -97,18 +73,12 @@ namespace MovesInChess
             }
             for (int i = 0; i < menu.Length; i++)
             {
-                if (i == cursorPositionX - 6)
-                {
+                if (i == cursorPosition)
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine(menu[i]);
-                }
                 else
-                {
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(menu[i]);
-                }
+                Console.WriteLine(menu[i]);
             }
-            Console.ResetColor();
         }
     }
 }

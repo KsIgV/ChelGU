@@ -4,10 +4,10 @@ namespace MovesInChess
 {
     class ChessBoard
     {
-        WorkWithFIles workWithFIles = new WorkWithFIles();
-        public void DrawTable() //рисуем таблицу
+        public void DrawTable(string[,] newTable) //рисуем таблицу
         {
-            string[,] newTable = workWithFIles.OpenForTXT();
+            Console.Clear();
+            Console.ResetColor();
             for (int i = 0; i < newTable.GetLength(0); i++)
             {
                 string upLeftLine = "┌";

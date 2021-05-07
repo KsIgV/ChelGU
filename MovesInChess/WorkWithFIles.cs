@@ -4,7 +4,6 @@ namespace MovesInChess
 {
     class WorkWithFIles //работа с файлами
     {
-        private string path = @"ChessBoard.txt";
         private string[,] StartingPositionOfTheFiguresOnTheBoard() //создает стартовый массив
         {
             string[,] newTable = new string[8, 8]
@@ -22,10 +21,10 @@ namespace MovesInChess
         }
         public string[,] OpenForTXT() //открывает файл если имеется
         {
-            if (File.Exists(path))
+            if (File.Exists(@"ChessBoard.txt"))
             {
                 string[,] newTable = new string[8, 8];
-                using (StreamReader popa = new StreamReader(path))
+                using (StreamReader popa = new StreamReader(@"ChessBoard.txt"))
                 {
                     string str;
                     for (int i = 0; i < newTable.GetLength(0); i++)
@@ -45,7 +44,7 @@ namespace MovesInChess
         }
         public void SaveForTXT(string[,] newTable) //записывает файл в тхт
         {
-            using StreamWriter sw = new StreamWriter(path, false);
+            using StreamWriter sw = new StreamWriter(@"ChessBoard.txt", false);
             for (int i = 0; i < newTable.GetLength(0); i++)
             {
                 for (int j = 0; j < newTable.GetLength(1); j++)
