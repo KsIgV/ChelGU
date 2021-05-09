@@ -4,6 +4,35 @@ namespace MovesInChess
 {
     class ChessBoard
     {
+        public void CheckPositionInTable(ref int cursorPositionY, ref int cursorPositionX) //проверяет чтоб мы далеко не ушли с доски
+        {
+            if (cursorPositionX > 16)
+                cursorPositionX = 15;
+            if (cursorPositionX <= 0)
+                cursorPositionX = 1;
+            if (cursorPositionY <= 0)
+                cursorPositionY = 1;
+            if (cursorPositionY > 22)
+                cursorPositionY = 22;
+            Console.SetCursorPosition(cursorPositionY, cursorPositionX);
+        }
+        public void FillTableFigures(string[,] newTable) //заносим в таблицу координаты 
+        {
+            int cursorPositionY = 1;
+            for (int i = 0; i < newTable.GetLength(0); i++)
+            {
+                int cursorPositionX = 1;
+                for (int j = 0; j < newTable.GetLength(1); j++)
+                {
+                    Console.SetCursorPosition(cursorPositionX, cursorPositionY);
+                    Console.Write(newTable[i, j]);
+                    cursorPositionX += 3;
+                }
+                cursorPositionY += 2;
+            }
+            //Console.WriteLine();
+            //Console.WriteLine();
+        }
         public void DrawTable(string[,] newTable) //рисуем таблицу
         {
             Console.Clear();

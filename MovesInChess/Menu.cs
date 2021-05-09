@@ -11,10 +11,11 @@ namespace MovesInChess
             string[] screenMenu = { "NEW GAME", "CONTINUE", "RATING", "EXIT" };
             int cursorPosition = 0;
             ItemHighlight(cursorPosition, screenNameGame, screenMenu);
-            WASDScreen(cursorPosition, screenNameGame, screenMenu);
+            MoveInScreen(cursorPosition, screenNameGame, screenMenu);
         }
-        private void WASDScreen(int cursorPosition, string[] screenChess, string[] screenMenu)
+        private void MoveInScreen(int cursorPosition, string[] screenChess, string[] screenMenu)
         {
+            Game game = new Game();
             while (true)
             {
                 switch (Console.ReadKey(true).Key)
@@ -34,15 +35,14 @@ namespace MovesInChess
                             cursorPosition -= 1;
                         break;
                     case ConsoleKey.Enter:
-                        ChessFigure chessFigure = new ChessFigure();
                         if (cursorPosition == 0) //new game
                         {
                             if (File.Exists("ChessBoard.txt"))
                                 File.Delete("ChessBoard.txt");
-                            chessFigure.CycleForArray();
+                            game.CycleForArray();
                         }
                         if (cursorPosition == 1) //continue
-                            chessFigure.CycleForArray();
+                            game.CycleForArray();
                         if (cursorPosition == 2) //rating
                             Console.WriteLine("Однажды тут будет рейтинг побед.");
                         if (cursorPosition == 3) //exit
@@ -50,6 +50,7 @@ namespace MovesInChess
                             WorkWithFIles workWithFIles = new WorkWithFIles();
                             string[,] newTable = workWithFIles.OpenForTXT();
                             workWithFIles.SaveForTXT(newTable);
+                            Console.ResetColor();
                             Environment.Exit(0);
                         }
                         break;
